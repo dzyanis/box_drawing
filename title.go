@@ -1,8 +1,8 @@
 package box_drawing
 
 import (
-    "strings"
-    "unicode/utf8"
+	"strings"
+	"unicode/utf8"
 )
 
 type Title string
