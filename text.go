@@ -1,4 +1,4 @@
-package box
+package box_drawing
 
 import "strings"
 
@@ -23,6 +23,10 @@ func NewText(text string) *Text {
 
 func (t Text) Draw() string {
 	return t.cnt
+}
+
+func (t Text) String() string {
+	return t.Draw()
 }
 
 func (t Text) Height() int {

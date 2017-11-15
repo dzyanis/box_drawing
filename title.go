@@ -1,4 +1,4 @@
-package box
+package box_drawing
 
 import (
     "strings"
@@ -8,6 +8,8 @@ import (
 type Title string
 
 func NewTitle(text string) *Title {
+	text = strings.Replace(text, "\n", "", -1)
+	text = strings.Replace(text, "\t", " ", -1)
 	text = strings.Title(text)
 	t := Title(text)
 	return &t
@@ -15,6 +17,10 @@ func NewTitle(text string) *Title {
 
 func (t Title) Draw() string {
 	return string(t)
+}
+
+func (t Title) String() string {
+	return t.Draw()
 }
 
 func (t Title) Height() int {
