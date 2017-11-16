@@ -42,6 +42,10 @@ func NewBorder(elements BorderElements) *Border {
 	}
 }
 
+func NewBorderEmpty() *Border {
+	return &Border{elements: BorderElements{}}
+}
+
 func NewBorderBoxDrawing() *Border {
 	elements := BorderElements{
 		SideTop:             RuneToElement('═'),

@@ -9,8 +9,8 @@ func main() {
 	title := bd.NewTitle("test")
 	fmt.Println(title)
 
-	//a1 := bd.NewCell(bd.NewTitle("A1"), bd.NewBorderBoxDrawing())
-	//fmt.Println(a1)
+	a1, _ := bd.NewCell(bd.NewTitle("A1"), bd.NewBorderBoxDrawing())
+	fmt.Println(a1.Draw())
 
 	//cell1, _ := bd.NewRow(a1, bd.NewCell(bd.NewTitle("A2")), bd.NewCell(bd.NewTitle("A3")))
 	//cell2, _ := bd.NewRow(bd.NewCell(bd.NewTitle("B1")), bd.NewCell(bd.NewTitle("B2")), bd.NewCell(bd.NewTitle("B3")))

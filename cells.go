@@ -5,13 +5,6 @@ import (
 	"strings"
 )
 
-type Contenter interface {
-	Height() int
-	Width() int
-	String() string
-	Lines() []string
-}
-
 type Celler interface {
 	Height() int
 	Width() int
@@ -25,8 +18,15 @@ type Cell struct {
 	width   *int
 }
 
+func NewCellEmpty() *Cell {
+	return &Cell{
+		content: &EmptyContent{},
+		border: NewBorderEmpty(),
+	}
+}
+
 func NewCell(args ...interface{}) (*Cell, error) {
-	c := &Cell{}
+	c := NewCellEmpty()
 	for _, v := range args {
 		switch v.(type) {
 		case Contenter:
@@ -56,19 +56,19 @@ func (c *Cell) Add(cont Contenter) error {
 
 func (c *Cell) firstLine() string {
 	return fmt.Sprintf(
-		"%c%s%s",
-		string(c.border.Element(AngleLeftTop)),
+		"%s%s%s",
+		c.border.Element(AngleLeftTop),
 		strings.Repeat(string(c.border.Element(SideTop)), c.content.Width()),
-		string(c.border.Element(AngleTopRight)),
+		c.border.Element(AngleTopRight),
 	)
 }
 
 func (c *Cell) lastLine() string {
 	return fmt.Sprintf(
-		"%c%s%s",
-		string(c.border.Element(AngleBottomLeft)),
+		"%s%s%s",
+		c.border.Element(AngleBottomLeft),
 		strings.Repeat(string(c.border.Element(SideBottom)), c.content.Width()),
-		string(c.border.Element(AngleRightBottom)),
+		c.border.Element(AngleRightBottom),
 	)
 }
 
@@ -77,18 +77,16 @@ func (c *Cell) Draw() string {
 
 	lines := c.content.Lines()
 	for h := 0; h < c.contentHeight(); h++ {
-		box += string(c.border.Element(SideLeft))
-		for w := 0; w < c.contentWidth(); w++ {
-			box += string(lines[h][w])
-		}
-		box += string(c.border.Element(SideRight)) + "\n"
+		box += c.border.Element(SideLeft)
+		box += lines[h]
+		box += c.border.Element(SideRight) + "\n"
 	}
 
 	box += c.lastLine()
 	return box
 }
 
-func (c Cell) SetBorder(border *Border) {
+func (c *Cell) SetBorder(border *Border) {
 	c.border = border
 }
 
