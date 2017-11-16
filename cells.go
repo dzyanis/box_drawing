@@ -21,8 +21,8 @@ type Celler interface {
 type Cell struct {
 	content Contenter
 	border  *Border
-	height *int
-	width  *int
+	height  *int
+	width   *int
 }
 
 func NewCell(args ...interface{}) (*Cell, error) {
@@ -76,9 +76,9 @@ func (c *Cell) Draw() string {
 	box := c.firstLine() + "\n"
 
 	lines := c.content.Lines()
-	for h:=0; h<c.contentHeight(); h++ {
+	for h := 0; h < c.contentHeight(); h++ {
 		box += string(c.border.Element(SideLeft))
-		for w:=0; w<c.contentWidth(); w++ {
+		for w := 0; w < c.contentWidth(); w++ {
 			box += string(lines[h][w])
 		}
 		box += string(c.border.Element(SideRight)) + "\n"

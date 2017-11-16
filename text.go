@@ -12,6 +12,7 @@ type Text struct {
 }
 
 func NewText(text string) *Text {
+	text = strings.Replace(text, "\t", "    ", -1)
 	t := &Text{cnt: text}
 
 	for _, line := range strings.Split(text, "\n") {
@@ -28,10 +29,10 @@ func (t Text) Lines() []string {
 	s := string(t.cnt)
 	lines := make([]string, t.Height())
 
-	for _, src := range strings.Split(s, "\n") {
-		line := make([]rune, t.Width())
+	for h, src := range strings.Split(s, "\n") {
+		line := []rune(strings.Repeat(" ", t.Width()))
 		copy(line, []rune(src))
-		lines = append(lines, string(line))
+		lines[h] = string(line)
 	}
 
 	return lines
@@ -42,6 +43,9 @@ func (t Text) String() string {
 }
 
 func (t Text) Height() int {
+	if t.height <= 0 {
+		return 1
+	}
 	return t.height
 }
 
