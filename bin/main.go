@@ -9,14 +9,12 @@ func main() {
 	title := bd.NewTitle("test")
 	fmt.Println(title)
 
-	b := bd.NewBox(title, bd.BoxLines{'═', '╗', '║', '╝', '═', '╚', '║', '╔'})
-	fmt.Println(b)
+	//a1 := bd.NewCell(bd.NewTitle("A1"), bd.NewBorderBoxDrawing())
+	//fmt.Println(a1)
 
-	s := bd.NewSequence(
-		bd.NewText("cell 1"),
-		bd.NewText("cell 2"),
-		bd.NewText("cell 3"),
-		bd.SequenceLines{'═', '╗', '║', '╝', '═', '╚', '║', '╔', '╦', '║', '╩'},
-	)
-	fmt.Println(s)
+	//cell1, _ := bd.NewRow(a1, bd.NewCell(bd.NewTitle("A2")), bd.NewCell(bd.NewTitle("A3")))
+	//cell2, _ := bd.NewRow(bd.NewCell(bd.NewTitle("B1")), bd.NewCell(bd.NewTitle("B2")), bd.NewCell(bd.NewTitle("B3")))
+	//cell3, _ := bd.NewRow(bd.NewCell(bd.NewTitle("C1")), bd.NewCell(bd.NewTitle("C2")), bd.NewCell(bd.NewTitle("C3")))
+	//tbl, _ := bd.NewTable(cell1, cell2, cell3, bd.NewBorderBoxDrawing())
+	//fmt.Println(tbl)
 }

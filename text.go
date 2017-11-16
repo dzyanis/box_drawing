@@ -1,6 +1,9 @@
 package box_drawing
 
-import "strings"
+import (
+	"strings"
+	"unicode/utf8"
+)
 
 type Text struct {
 	cnt    string
@@ -14,19 +17,28 @@ func NewText(text string) *Text {
 	for _, line := range strings.Split(text, "\n") {
 		if t.width < len(line) {
 			t.height += 1
-			t.width = len(line)
+			t.width = utf8.RuneCountInString(line)
 		}
 	}
 
 	return t
 }
 
-func (t Text) Draw() string {
-	return t.cnt
+func (t Text) Lines() []string {
+	s := string(t.cnt)
+	lines := make([]string, t.Height())
+
+	for _, src := range strings.Split(s, "\n") {
+		line := make([]rune, t.Width())
+		copy(line, []rune(src))
+		lines = append(lines, string(line))
+	}
+
+	return lines
 }
 
 func (t Text) String() string {
-	return t.Draw()
+	return t.cnt
 }
 
 func (t Text) Height() int {

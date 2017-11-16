@@ -15,7 +15,7 @@ fmt.Println(text.Draw())
 ```
 returns ```test```
 
-### Box
+### Cell
 ```go
 title := NewTitle("test")
 bd := box.NewBox(title, box.Lines{'═', '╗', '║', '╝', '═', '╚', '║', '╔'})
@@ -28,7 +28,7 @@ returns
 ╚════╝
 ```
 
-### Horizontal sequence
+### Row
 ```go
 	s := NewSequence(
 		NewText("cell 1"),
@@ -45,7 +45,8 @@ returns
 ╚══════╩══════╩══════╝
 ```
 
+### Table
+
 ## Todo
-- Table
 - Load from SCV
 - Import to HTML

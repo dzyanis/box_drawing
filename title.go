@@ -15,12 +15,15 @@ func NewTitle(text string) *Title {
 	return &t
 }
 
-func (t Title) Draw() string {
-	return string(t)
+func (t Title) Lines() []string {
+	line := make([]rune, t.Width())
+	copy(line, []rune(string(t)))
+
+	return []string{string(line)}
 }
 
 func (t Title) String() string {
-	return t.Draw()
+	return string(t)
 }
 
 func (t Title) Height() int {
