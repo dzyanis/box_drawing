@@ -73,3 +73,32 @@ func (b Border) Element(element BorderElement) string {
 	}
 	return ""
 }
+
+func (b Border) Width(separators int) int {
+	w := 0
+	if separators > 1 && b.elements[SeparatorVertical] != nil {
+		w += separators
+	}
+	// todo: Probably an element can be more then 1
+	if b.elements[SideRight] != nil {
+		w += 1
+	}
+	if b.elements[SideLeft] != nil {
+		w += 1
+	}
+	return w
+}
+
+func (b Border) Height(separators int) int {
+	h := 0
+	if separators > 1 && b.elements[SeparatorHorizontal] != nil {
+		h += separators
+	}
+	if b.elements[SideTop] != nil {
+		h += 1
+	}
+	if b.elements[SideBottom] != nil {
+		h += 1
+	}
+	return h
+}

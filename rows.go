@@ -1,15 +1,19 @@
 package box_drawing
 
+import (
+	"strings"
+)
+
 type Rower interface {
 	Height() int
 	Width() int
 }
 
 type Row struct {
-	cells  []Celler
-	border *Border
-	height *int
-	width  *int
+	cells       []Celler
+	border      *Border
+	innerHeight *int
+	innerWidth  *int
 }
 
 func NewRow(args ...interface{}) (*Row, error) {
@@ -30,11 +34,11 @@ func NewRow(args ...interface{}) (*Row, error) {
 }
 
 func (r *Row) Add(cell Celler) error {
-	if r.height != nil && cell.Height()+r.cellsHeight() > *r.height {
+	if r.innerHeight != nil && cell.Height()+r.cellsHeight() > *r.innerHeight {
 		return ErrRowNotFitHeight
 	}
 
-	if r.width != nil && cell.Width()+r.cellsWidth() > *r.width {
+	if r.innerWidth != nil && cell.Width()+r.cellsWidth() > *r.innerWidth {
 		return ErrRowNotFitWidth
 	}
 
@@ -43,8 +47,8 @@ func (r *Row) Add(cell Celler) error {
 }
 
 func (r *Row) Height() int {
-	if r.height != nil {
-		return *r.height
+	if r.innerHeight != nil {
+		return *r.innerHeight
 	}
 
 	height := r.cellsHeight()
@@ -61,13 +65,13 @@ func (r *Row) cellsHeight() int {
 	return height
 }
 
-func (r *Row) SetHeight(height int) {
-	r.height = &height
+func (r *Row) SetInnerHeight(height int) {
+	r.innerHeight = &height
 }
 
 func (r *Row) Width() int {
-	if r.width != nil {
-		return *r.width
+	if r.innerWidth != nil {
+		return *r.innerWidth
 	}
 
 	width := r.cellsWidth()
@@ -84,10 +88,53 @@ func (r *Row) cellsWidth() int {
 	return width
 }
 
-func (r *Row) SetWidth(width int) {
-	r.width = &width
+func (r *Row) SetInnerWidth(width int) {
+	r.innerWidth = &width
 }
 
 func (r *Row) SetBorder(border *Border) {
 	r.border = border
 }
+
+func (r *Row) firstLine() string {
+	s := r.border.Element(AngleLeftTop)
+	cnt := len(r.cells)
+	for _, cell := range r.cells {
+		s += strings.Repeat(r.border.Element(SideTop), cell.Width())
+		if cnt < 1 {
+			s += r.border.Element(AngleTopRight)
+		} else {
+			s += r.border.Element(SeparatorTop)
+		}
+		cnt--
+	}
+	return s
+}
+
+func (r *Row) lastLine() string {
+	s := r.border.Element(AngleBottomLeft)
+	cnt := len(r.cells)
+	for _, cell := range r.cells {
+		s += strings.Repeat(r.border.Element(SideBottom), cell.Width())
+		if cnt < 1 {
+			s += r.border.Element(AngleRightBottom)
+		} else {
+			s += r.border.Element(SeparatorBottom)
+		}
+		cnt--
+	}
+	return s
+}
+
+//func (r *Row) Draw() int {
+//	text := r.firstLine()
+//	for _, cell := range r.cells {
+//		for _, line := range cell.Boxes() {
+//			text += r.border.Element(SideLeft)
+//			text += line
+//			text += r.border.Element(SideRight)
+//		}
+//	}
+//	text += r.lastLine()
+//	return width
+//}

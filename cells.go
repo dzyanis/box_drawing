@@ -12,16 +12,16 @@ type Celler interface {
 }
 
 type Cell struct {
-	content Contenter
-	border  *Border
-	height  *int
-	width   *int
+	content     *Box
+	border      *Border
+	innerHeight *int
+	innerWidth  *int
 }
 
 func NewCellEmpty() *Cell {
 	return &Cell{
-		content: &EmptyContent{},
-		border: NewBorderEmpty(),
+		content: &Box{},
+		border:  NewBorderEmpty(),
 	}
 }
 
@@ -29,8 +29,8 @@ func NewCell(args ...interface{}) (*Cell, error) {
 	c := NewCellEmpty()
 	for _, v := range args {
 		switch v.(type) {
-		case Contenter:
-			err := c.Add(v.(Contenter))
+		case *Box:
+			err := c.Add(v.(*Box))
 			if err != nil {
 				return c, err
 			}
@@ -41,16 +41,16 @@ func NewCell(args ...interface{}) (*Cell, error) {
 	return c, nil
 }
 
-func (c *Cell) Add(cont Contenter) error {
-	if c.height != nil && cont.Height()+c.contentHeight() > *c.height {
+func (c *Cell) Add(b *Box) error {
+	if c.innerHeight != nil && b.Height()+c.contentHeight() > *c.innerHeight {
 		return ErrRowNotFitHeight
 	}
 
-	if c.width != nil && cont.Width()+c.contentWidth() > *c.width {
+	if c.innerWidth != nil && b.Width()+c.contentWidth() > *c.innerWidth {
 		return ErrRowNotFitWidth
 	}
 
-	c.content = cont
+	c.content = b
 	return nil
 }
 
@@ -75,14 +75,17 @@ func (c *Cell) lastLine() string {
 func (c *Cell) Draw() string {
 	box := c.firstLine() + "\n"
 
-	lines := c.content.Lines()
-	for h := 0; h < c.contentHeight(); h++ {
+	for _, line := range c.content.Lines() {
 		box += c.border.Element(SideLeft)
-		box += lines[h]
+		box += string(line)
 		box += c.border.Element(SideRight) + "\n"
 	}
 
 	box += c.lastLine()
+
+	nb := NewBoxByRune(' ', uint(c.Height()), uint(c.Width()))
+	nb.Merge(c.content, uint(c.border.Height(0))/2, uint(c.border.Width(0))/2)
+
 	return box
 }
 
@@ -91,8 +94,8 @@ func (c *Cell) SetBorder(border *Border) {
 }
 
 func (c *Cell) Height() int {
-	if c.height != nil {
-		return *c.height
+	if c.innerHeight != nil {
+		return *c.innerHeight
 	}
 
 	height := c.contentHeight()
@@ -100,19 +103,21 @@ func (c *Cell) Height() int {
 }
 
 func (c *Cell) contentHeight() int {
+	h := 0
 	if c.content != nil {
-		return c.content.Height()
+		h += c.content.Height()
 	}
-	return 0
+	h += c.border.Height(0)
+	return h
 }
 
-func (c *Cell) SetHeight(height int) {
-	c.height = &height
+func (c *Cell) SetInnerHeight(height int) {
+	c.innerHeight = &height
 }
 
 func (c *Cell) Width() int {
-	if c.width != nil {
-		return *c.width
+	if c.innerWidth != nil {
+		return *c.innerWidth
 	}
 
 	width := c.contentWidth()
@@ -120,12 +125,14 @@ func (c *Cell) Width() int {
 }
 
 func (c *Cell) contentWidth() int {
+	w := 0
 	if c.content != nil {
-		return c.content.Width()
+		w += c.content.Width()
 	}
-	return 0
+	w += c.border.Width(0)
+	return w
 }
 
-func (c *Cell) SetWidth(width int) {
-	c.width = &width
+func (c *Cell) SetInnerWidth(width int) {
+	c.innerWidth = &width
 }

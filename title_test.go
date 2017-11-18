@@ -23,11 +23,11 @@ func TestTitleString(t *testing.T) {
 func TestTitleHeightAndWidth(t *testing.T) {
 	title := NewTitle("some text\n\thello")
 
-	if title.Height() != 1 {
+	if title.Box().Height() != 1 {
 		t.Error("Unexpected result")
 	}
 
-	if title.Width() != 15 {
-		t.Errorf("Unexpected result: `%s` len:%d", title.String(), title.Width())
+	if title.Box().Width() != 15 {
+		t.Errorf("Unexpected result: `%s` len:%d", title.String(), title.Box().Width())
 	}
 }

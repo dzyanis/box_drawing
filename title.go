@@ -15,21 +15,15 @@ func NewTitle(text string) *Title {
 	return &t
 }
 
-func (t Title) Lines() []string {
-	line := make([]rune, t.Width())
-	copy(line, []rune(string(t)))
-
-	return []string{string(line)}
-}
-
 func (t Title) String() string {
 	return string(t)
 }
 
-func (t Title) Height() int {
-	return 1
-}
+func (t Title) Box() *Box {
+	w := utf8.RuneCountInString(string(t))
 
-func (t Title) Width() int {
-	return utf8.RuneCountInString(string(t))
+	line := make([]rune, w)
+	copy(line, []rune(string(t)))
+
+	return NewBox([]string{string(line)})
 }

@@ -5,50 +5,32 @@ import (
 	"unicode/utf8"
 )
 
-type Text struct {
-	cnt    string
-	height int
-	width  int
-}
+type Text string
 
-func NewText(text string) *Text {
+func NewText(text string) Text {
 	text = strings.Replace(text, "\t", "    ", -1)
-	t := &Text{cnt: text}
-
-	for _, line := range strings.Split(text, "\n") {
-		if t.width < len(line) {
-			t.height += 1
-			t.width = utf8.RuneCountInString(line)
-		}
-	}
-
-	return t
-}
-
-func (t Text) Lines() []string {
-	s := string(t.cnt)
-	lines := make([]string, t.Height())
-
-	for h, src := range strings.Split(s, "\n") {
-		line := []rune(strings.Repeat(" ", t.Width()))
-		copy(line, []rune(src))
-		lines[h] = string(line)
-	}
-
-	return lines
+	return Text(text)
 }
 
 func (t Text) String() string {
-	return t.cnt
+	return string(t)
 }
 
-func (t Text) Height() int {
-	if t.height <= 0 {
-		return 1
+func (t Text) Box() *Box {
+	var h, w int
+	lines := strings.Split(string(t), "\n")
+	for _, line := range lines {
+		cnt := utf8.RuneCountInString(line)
+		if w < cnt {
+			w = cnt
+		}
+		h++
 	}
-	return t.height
-}
-
-func (t Text) Width() int {
-	return t.width
+	//lines := make([]string, h)
+	for h, src := range lines {
+		line := []rune(strings.Repeat(" ", w))
+		copy(line, []rune(src))
+		lines[h] = string(line)
+	}
+	return NewBox(lines)
 }

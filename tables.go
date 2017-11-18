@@ -3,8 +3,8 @@ package box_drawing
 import "errors"
 
 var (
-	ErrRowNotFitHeight = errors.New("Row doesn't fit by the height")
-	ErrRowNotFitWidth  = errors.New("Row doesn't fit by the width")
+	ErrRowNotFitHeight = errors.New("Row doesn't fit by the innerHeight")
+	ErrRowNotFitWidth  = errors.New("Row doesn't fit by the innerWidth")
 )
 
 type Tabler interface {

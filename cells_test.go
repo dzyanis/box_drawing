@@ -35,18 +35,47 @@ func TestNewCell(t *testing.T) {
 
 func TestCellAdd(t *testing.T) {
 	tab, _ := NewCell()
-	tab.SetWidth(10)
-	tab.SetHeight(10)
+	tab.SetInnerWidth(10)
+	tab.SetInnerHeight(10)
 
-	if tab.Add(&MockContenter{9, 9, ""}) != nil {
+	if tab.Add(NewBoxByRune(' ', 9, 9)) != nil {
 		t.Error("Unexpected result")
 	}
 
-	if tab.Add(&MockContenter{9, 0, ""}) == nil {
+	if tab.Add(NewBoxByRune(' ', 9, 1)) == nil {
 		t.Error("Unexpected result")
 	}
 
-	if tab.Add(&MockContenter{0, 9, ""}) == nil {
+	if tab.Add(NewBoxByRune(' ', 1, 9)) == nil {
+		t.Error("Unexpected result")
+	}
+}
+
+func TestCellWidth(t *testing.T) {
+	tab, _ := NewCell()
+	tab.SetInnerWidth(10)
+
+	if tab.Width() != 10 {
+		t.Error("Unexpected result")
+	}
+}
+
+func TestCellWidthWithBorder(t *testing.T) {
+	tab, _ := NewCell(
+		NewBorderBoxDrawing(),
+		NewBoxByRune(' ', 10, 10),
+	)
+
+	if tab.Width() != 12 {
+		t.Errorf("Unexpected result: %d", tab.Width())
+	}
+}
+
+func TestCellHeight(t *testing.T) {
+	tab, _ := NewCell()
+	tab.SetInnerHeight(10)
+
+	if tab.Height() != 10 {
 		t.Error("Unexpected result")
 	}
 }
