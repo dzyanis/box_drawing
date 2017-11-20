@@ -5,6 +5,34 @@ import (
 )
 
 func TestNewBox(t *testing.T) {
+	box := NewBox([]string{
+		"a  ",
+		"ab ",
+		"abc",
+	})
+	if box.String() != "a  \nab \nabc" {
+		t.Errorf("Unexpected result: %#v", box.String())
+	}
+	if box.Height() != 3 {
+		t.Errorf("Unexpected result: %#v", box.Height())
+	}
+	if box.Width() != 3 {
+		t.Errorf("Unexpected result: %#v", box.Width())
+	}
+
+	box = NewBox([]string{"A1"})
+	if box.String() != "A1" {
+		t.Errorf("Unexpected result: %#v", box.String())
+	}
+	if box.Height() != 1 {
+		t.Errorf("Unexpected result: %#v", box.Height())
+	}
+	if box.Width() != 2 {
+		t.Errorf("Unexpected result: %#v", box.Width())
+	}
+}
+
+func TestNewBoxByRune(t *testing.T) {
 	box := NewBoxByRune('0', 1, 1)
 	if box.String() != "0" {
 		t.Errorf("Unexpected result: %#v", box.String())
@@ -94,6 +122,34 @@ func TestBoxMerge(t *testing.T) {
 
 	b1.Merge(NewBoxByRune('0', 5, 5), 0, 0)
 	if b1.String() != "000\n000\n000" {
+		t.Errorf("Unexpected result: %#v", b1.String())
+	}
+}
+
+func TestBoxSetColumn(t *testing.T) {
+	b1 := NewBoxByRune('0', 3, 3)
+	b1.SetColumn('1', 0, 0, 1)
+	if b1.String() != "100\n000\n000" {
+		t.Errorf("Unexpected result: %#v", b1.String())
+	}
+
+	b1.SetColumn('1', 0, 0, 3)
+	if b1.String() != "100\n100\n100" {
+		t.Errorf("Unexpected result: %#v", b1.String())
+	}
+
+	b1.SetColumn('1', 1, 1, 3)
+	if b1.String() != "100\n110\n110" {
+		t.Errorf("Unexpected result: %#v", b1.String())
+	}
+
+	b1.SetColumn('1', 2, 1, 1)
+	if b1.String() != "100\n111\n110" {
+		t.Errorf("Unexpected result: %#v", b1.String())
+	}
+
+	b1.SetColumn('1', 2, 0, 1)
+	if b1.String() != "101\n111\n110" {
 		t.Errorf("Unexpected result: %#v", b1.String())
 	}
 }

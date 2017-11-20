@@ -67,17 +67,54 @@ func NewBorderBoxDrawing() *Border {
 	return NewBorder(elements)
 }
 
-func (b Border) Element(element BorderElement) string {
+func (b Border) Element(element BorderElement) Element {
 	if b.elements[element] != nil {
-		return string(*b.elements[element])
+		return b.elements[element]
 	}
-	return ""
+	return nil
 }
 
-func (b Border) Width(separators int) int {
-	w := 0
+func (b Border) Rune(element BorderElement) rune {
+	if b.elements[element] != nil {
+		return rune(*b.elements[element])
+	}
+	return ' '
+}
+
+func (b Border) WidthTop(separators int) uint {
+	var w uint
 	if separators > 1 && b.elements[SeparatorVertical] != nil {
-		w += separators
+		w += uint(separators)
+	}
+	// todo: Probably an element can be more then 1
+	if b.elements[AngleTopRight] != nil {
+		w += 1
+	}
+	if b.elements[AngleLeftTop] != nil {
+		w += 1
+	}
+	return w
+}
+
+func (b Border) WidthBottom(separators int) uint {
+	var w uint
+	if separators > 1 && b.elements[SeparatorVertical] != nil {
+		w += uint(separators)
+	}
+	// todo: Probably an element can be more then 1
+	if b.elements[AngleBottomLeft] != nil {
+		w += 1
+	}
+	if b.elements[AngleRightBottom] != nil {
+		w += 1
+	}
+	return w
+}
+
+func (b Border) Width(separators int) uint {
+	var w uint
+	if separators > 1 && b.elements[SeparatorVertical] != nil {
+		w += uint(separators)
 	}
 	// todo: Probably an element can be more then 1
 	if b.elements[SideRight] != nil {
@@ -89,10 +126,10 @@ func (b Border) Width(separators int) int {
 	return w
 }
 
-func (b Border) Height(separators int) int {
-	h := 0
+func (b Border) Height(separators int) uint {
+	var h uint
 	if separators > 1 && b.elements[SeparatorHorizontal] != nil {
-		h += separators
+		h += uint(separators)
 	}
 	if b.elements[SideTop] != nil {
 		h += 1

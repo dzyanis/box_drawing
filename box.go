@@ -38,16 +38,16 @@ func NewBox(sl []string) *Box {
 	return &Box{uint(h), uint(w), lines}
 }
 
-func (b *Box) Width() int {
+func (b *Box) Width() uint {
 	if b.height > 0 {
-		return int(b.weight)
+		return b.weight
 	}
 	return 0
 }
 
-func (b *Box) Height() int {
+func (b *Box) Height() uint {
 	if b.weight > 0 {
-		return int(b.height)
+		return b.height
 	}
 	return 0
 }
@@ -88,7 +88,7 @@ func (b *Box) SetRow(r rune, x uint, y uint, n uint) {
 func (b *Box) SetColumn(r rune, x uint, y uint, n uint) {
 	if x < uint(b.Width()) && y < uint(b.Height()) {
 		mh := b.min(y+n, uint(b.Height()))
-		for j := x; j < mh; j++ {
+		for j := y; j < mh; j++ {
 			b.lines[j][x] = r
 		}
 	}

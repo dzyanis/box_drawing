@@ -14,7 +14,7 @@ func TestNewBorder(t *testing.T) {
 
 func TestNewBorderBoxDrawing(t *testing.T) {
 	bord := NewBorderBoxDrawing()
-	if bord.Element(SideTop) != "═" {
+	if bord.Rune(SideTop) != '═' {
 		t.Error("Unexpected result")
 	}
 }

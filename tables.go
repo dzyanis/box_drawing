@@ -8,14 +8,14 @@ var (
 )
 
 type Tabler interface {
-	Height() int
-	Width() int
+	Height() uint
+	Width() uint
 }
 
 type Table struct {
 	rows   []Rower
-	height *int
-	width  *int
+	height *uint
+	width  *uint
 }
 
 type TableDecorator func(tab *Table) error
@@ -56,7 +56,7 @@ func (t *Table) Add(row Rower) error {
 	return nil
 }
 
-func (t *Table) Height() int {
+func (t *Table) Height() uint {
 	if t.height != nil {
 		return *t.height
 	}
@@ -65,19 +65,19 @@ func (t *Table) Height() int {
 	return height
 }
 
-func (t *Table) rowsHeight() int {
-	height := 0
+func (t *Table) rowsHeight() uint {
+	var height uint
 	for _, r := range t.rows {
 		height += r.Height()
 	}
 	return height
 }
 
-func (t *Table) SetHeight(height int) {
+func (t *Table) SetHeight(height uint) {
 	t.height = &height
 }
 
-func (t *Table) Width() int {
+func (t *Table) Width() uint {
 	if t.width != nil {
 		return *t.width
 	}
@@ -86,8 +86,8 @@ func (t *Table) Width() int {
 	return width
 }
 
-func (t *Table) rowsWidth() int {
-	width := 0
+func (t *Table) rowsWidth() uint {
+	var width uint
 	for _, r := range t.rows {
 		if width < r.Width() {
 			width = r.Width()
@@ -96,7 +96,7 @@ func (t *Table) rowsWidth() int {
 	return width
 }
 
-func (t *Table) SetWidth(width int) {
+func (t *Table) SetWidth(width uint) {
 	t.width = &width
 }
 

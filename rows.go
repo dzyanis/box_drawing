@@ -5,15 +5,15 @@ import (
 )
 
 type Rower interface {
-	Height() int
-	Width() int
+	Height() uint
+	Width() uint
 }
 
 type Row struct {
 	cells       []Celler
 	border      *Border
-	innerHeight *int
-	innerWidth  *int
+	innerHeight *uint
+	innerWidth  *uint
 }
 
 func NewRow(args ...interface{}) (*Row, error) {
@@ -46,7 +46,7 @@ func (r *Row) Add(cell Celler) error {
 	return nil
 }
 
-func (r *Row) Height() int {
+func (r *Row) Height() uint {
 	if r.innerHeight != nil {
 		return *r.innerHeight
 	}
@@ -55,8 +55,8 @@ func (r *Row) Height() int {
 	return height
 }
 
-func (r *Row) cellsHeight() int {
-	height := 0
+func (r *Row) cellsHeight() uint {
+	var height uint
 	for _, r := range r.cells {
 		if height < r.Width() {
 			height = r.Width()
@@ -65,11 +65,11 @@ func (r *Row) cellsHeight() int {
 	return height
 }
 
-func (r *Row) SetInnerHeight(height int) {
+func (r *Row) SetInnerHeight(height uint) {
 	r.innerHeight = &height
 }
 
-func (r *Row) Width() int {
+func (r *Row) Width() uint {
 	if r.innerWidth != nil {
 		return *r.innerWidth
 	}
@@ -78,8 +78,8 @@ func (r *Row) Width() int {
 	return width
 }
 
-func (r *Row) cellsWidth() int {
-	width := 0
+func (r *Row) cellsWidth() uint {
+	var width uint
 	for _, r := range r.cells {
 		if width < r.Width() {
 			width = r.Width()
@@ -88,7 +88,7 @@ func (r *Row) cellsWidth() int {
 	return width
 }
 
-func (r *Row) SetInnerWidth(width int) {
+func (r *Row) SetInnerWidth(width uint) {
 	r.innerWidth = &width
 }
 
@@ -97,14 +97,14 @@ func (r *Row) SetBorder(border *Border) {
 }
 
 func (r *Row) firstLine() string {
-	s := r.border.Element(AngleLeftTop)
+	s := string(r.border.Rune(AngleLeftTop))
 	cnt := len(r.cells)
 	for _, cell := range r.cells {
-		s += strings.Repeat(r.border.Element(SideTop), cell.Width())
+		s += strings.Repeat(string(r.border.Rune(SideTop)), int(cell.Width()))
 		if cnt < 1 {
-			s += r.border.Element(AngleTopRight)
+			s += string(r.border.Rune(AngleTopRight))
 		} else {
-			s += r.border.Element(SeparatorTop)
+			s += string(r.border.Rune(SeparatorTop))
 		}
 		cnt--
 	}
@@ -112,14 +112,14 @@ func (r *Row) firstLine() string {
 }
 
 func (r *Row) lastLine() string {
-	s := r.border.Element(AngleBottomLeft)
+	s := string(r.border.Rune(AngleBottomLeft))
 	cnt := len(r.cells)
 	for _, cell := range r.cells {
-		s += strings.Repeat(r.border.Element(SideBottom), cell.Width())
+		s += strings.Repeat(string(r.border.Rune(SideBottom)), int(cell.Width()))
 		if cnt < 1 {
-			s += r.border.Element(AngleRightBottom)
+			s += string(r.border.Rune(AngleRightBottom))
 		} else {
-			s += r.border.Element(SeparatorBottom)
+			s += string(r.border.Rune(SeparatorBottom))
 		}
 		cnt--
 	}

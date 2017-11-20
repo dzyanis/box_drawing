@@ -5,24 +5,11 @@ import (
 )
 
 type MockContenter struct {
-	H, W int
-	R    string
+	b *Box
 }
 
-func (m *MockContenter) Height() int {
-	return m.H
-}
-
-func (m *MockContenter) Width() int {
-	return m.W
-}
-
-func (m *MockContenter) String() string {
-	return m.R
-}
-
-func (m *MockContenter) Lines() []string {
-	return []string{m.R}
+func (m *MockContenter) Box() *Box {
+	return m.b
 }
 
 func TestNewCell(t *testing.T) {
@@ -38,15 +25,15 @@ func TestCellAdd(t *testing.T) {
 	tab.SetInnerWidth(10)
 	tab.SetInnerHeight(10)
 
-	if tab.Add(NewBoxByRune(' ', 9, 9)) != nil {
+	if tab.Add(&MockContenter{NewBoxByRune(' ', 9, 9)}) != nil {
 		t.Error("Unexpected result")
 	}
 
-	if tab.Add(NewBoxByRune(' ', 9, 1)) == nil {
+	if tab.Add(&MockContenter{NewBoxByRune(' ', 9, 1)}) == nil {
 		t.Error("Unexpected result")
 	}
 
-	if tab.Add(NewBoxByRune(' ', 1, 9)) == nil {
+	if tab.Add(&MockContenter{NewBoxByRune(' ', 1, 9)}) == nil {
 		t.Error("Unexpected result")
 	}
 }
@@ -63,7 +50,7 @@ func TestCellWidth(t *testing.T) {
 func TestCellWidthWithBorder(t *testing.T) {
 	tab, _ := NewCell(
 		NewBorderBoxDrawing(),
-		NewBoxByRune(' ', 10, 10),
+		&MockContenter{NewBoxByRune(' ', 10, 10)},
 	)
 
 	if tab.Width() != 12 {

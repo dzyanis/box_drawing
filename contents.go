@@ -1,10 +1,7 @@
 package box_drawing
 
 type Contenter interface {
-	Height() int
-	Width() int
-	String() string
-	Lines() []string
+	Box() *Box
 }
 
 type EmptyContent struct{}

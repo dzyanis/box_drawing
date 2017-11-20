@@ -1,26 +1,20 @@
 package box_drawing
 
-import (
-	"fmt"
-	"strings"
-)
-
 type Celler interface {
-	Height() int
-	Width() int
+	Height() uint
+	Width() uint
 	Draw() string
 }
 
 type Cell struct {
-	content     *Box
+	content     Contenter
 	border      *Border
-	innerHeight *int
-	innerWidth  *int
+	innerHeight *uint
+	innerWidth  *uint
 }
 
 func NewCellEmpty() *Cell {
 	return &Cell{
-		content: &Box{},
 		border:  NewBorderEmpty(),
 	}
 }
@@ -29,8 +23,8 @@ func NewCell(args ...interface{}) (*Cell, error) {
 	c := NewCellEmpty()
 	for _, v := range args {
 		switch v.(type) {
-		case *Box:
-			err := c.Add(v.(*Box))
+		case Contenter:
+			err := c.Add(v.(Contenter))
 			if err != nil {
 				return c, err
 			}
@@ -41,12 +35,12 @@ func NewCell(args ...interface{}) (*Cell, error) {
 	return c, nil
 }
 
-func (c *Cell) Add(b *Box) error {
-	if c.innerHeight != nil && b.Height()+c.contentHeight() > *c.innerHeight {
+func (c *Cell) Add(b Contenter) error {
+	if c.innerHeight != nil && b.Box().Height()+c.contentHeight() > *c.innerHeight {
 		return ErrRowNotFitHeight
 	}
 
-	if c.innerWidth != nil && b.Width()+c.contentWidth() > *c.innerWidth {
+	if c.innerWidth != nil && b.Box().Width()+c.contentWidth() > *c.innerWidth {
 		return ErrRowNotFitWidth
 	}
 
@@ -54,85 +48,94 @@ func (c *Cell) Add(b *Box) error {
 	return nil
 }
 
-func (c *Cell) firstLine() string {
-	return fmt.Sprintf(
-		"%s%s%s",
-		c.border.Element(AngleLeftTop),
-		strings.Repeat(string(c.border.Element(SideTop)), c.content.Width()),
-		c.border.Element(AngleTopRight),
-	)
-}
+//func (c *Cell) firstLine() string {
+//	return fmt.Sprintf(
+//		"%s%s%s",
+//		c.border.Element(AngleLeftTop),
+//		strings.Repeat(string(c.border.Element(SideTop)), c.content.Width()),
+//		c.border.Element(AngleTopRight),
+//	)
+//}
+//
+//func (c *Cell) lastLine() string {
+//	return fmt.Sprintf(
+//		"%s%s%s",
+//		c.border.Element(AngleBottomLeft),
+//		strings.Repeat(string(c.border.Element(SideBottom)), c.content.Width()),
+//		c.border.Element(AngleRightBottom),
+//	)
+//}
 
-func (c *Cell) lastLine() string {
-	return fmt.Sprintf(
-		"%s%s%s",
-		c.border.Element(AngleBottomLeft),
-		strings.Repeat(string(c.border.Element(SideBottom)), c.content.Width()),
-		c.border.Element(AngleRightBottom),
-	)
-}
+func (c *Cell) Box() *Box {
+	b := NewBoxByRune(' ', c.Height(), c.Width())
 
-func (c *Cell) Draw() string {
-	box := c.firstLine() + "\n"
+	xm := c.contentWidth()-1
+	ym := c.contentHeight()-1
 
-	for _, line := range c.content.Lines() {
-		box += c.border.Element(SideLeft)
-		box += string(line)
-		box += c.border.Element(SideRight) + "\n"
+	b.SetPoint(c.border.Rune(AngleLeftTop), 0, 0)
+	if c.content != nil {
+		b.SetRow(c.border.Rune(SideTop), 1, 0, xm)
 	}
+	b.SetPoint(c.border.Rune(AngleTopRight),xm, 0)
 
-	box += c.lastLine()
+	b.SetColumn(c.border.Rune(SideLeft), 0, 1, c.contentHeight()-c.border.Height(0))
+	b.SetColumn(c.border.Rune(SideRight), xm, 1, c.contentHeight()-c.border.Height(0))
 
-	nb := NewBoxByRune(' ', uint(c.Height()), uint(c.Width()))
-	nb.Merge(c.content, uint(c.border.Height(0))/2, uint(c.border.Width(0))/2)
+	b.SetPoint(c.border.Rune(AngleBottomLeft), 0, ym)
+	if c.content != nil {
+		b.SetRow(c.border.Rune(SideBottom), 1, ym, xm)
+	}
+	b.SetPoint(c.border.Rune(AngleRightBottom), xm, ym)
 
-	return box
+	b.Merge(c.content.Box(), 1, 1)
+
+	return b
 }
 
 func (c *Cell) SetBorder(border *Border) {
 	c.border = border
 }
 
-func (c *Cell) Height() int {
+func (c *Cell) Height() uint {
 	if c.innerHeight != nil {
-		return *c.innerHeight
+		return *c.innerHeight + c.border.Height(0)
 	}
 
 	height := c.contentHeight()
 	return height
 }
 
-func (c *Cell) contentHeight() int {
-	h := 0
+func (c *Cell) contentHeight() uint {
+	var h uint
 	if c.content != nil {
-		h += c.content.Height()
+		h += c.content.Box().Height()
 	}
 	h += c.border.Height(0)
 	return h
 }
 
-func (c *Cell) SetInnerHeight(height int) {
+func (c *Cell) SetInnerHeight(height uint) {
 	c.innerHeight = &height
 }
 
-func (c *Cell) Width() int {
+func (c *Cell) Width() uint {
 	if c.innerWidth != nil {
-		return *c.innerWidth
+		return *c.innerWidth + c.border.Width(0)
 	}
 
 	width := c.contentWidth()
 	return width
 }
 
-func (c *Cell) contentWidth() int {
-	w := 0
+func (c *Cell) contentWidth() uint {
+	var w uint
 	if c.content != nil {
-		w += c.content.Width()
+		w += c.content.Box().Width()
 	}
 	w += c.border.Width(0)
 	return w
 }
 
-func (c *Cell) SetInnerWidth(width int) {
+func (c *Cell) SetInnerWidth(width uint) {
 	c.innerWidth = &width
 }
